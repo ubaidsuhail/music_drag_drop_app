@@ -134,7 +134,7 @@ class _HomeState extends State<Home> {
                   child: Column(
                     children: <Widget>[
                       Image(
-                        image: AssetImage("assets/audio_Icon.png"),
+                        image: AssetImage("assets/audio_icon.png"),
                         height: 100,
                         width: MediaQuery.of(context).size.width / 2,
                         color: Colors.white,
@@ -183,7 +183,7 @@ class _HomeState extends State<Home> {
               child: Column(
                 children: <Widget>[
                   Image(
-                    image: AssetImage("assets/video_Icon.png"),
+                    image: AssetImage("assets/video_icon.png"),
                     color: Colors.white,
                     height: 100,
                     width: MediaQuery.of(context).size.width / 2,

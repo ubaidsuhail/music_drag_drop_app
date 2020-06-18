@@ -10,6 +10,9 @@ import '../theme.dart';
 import 'home.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class Login extends StatefulWidget {
   @override
@@ -21,6 +24,7 @@ class _LoginState extends State<Login> {
   TextEditingController passController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool passwordVisibleLogin = false;
@@ -167,6 +171,9 @@ class _LoginState extends State<Login> {
                                         ],
                                       ).show();
                                     } else {
+
+                                      TakePermission();
+
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -278,6 +285,11 @@ class _LoginState extends State<Login> {
                                         ],
                                       ).show();
                                     } else {
+
+                                      //TakePermission
+//
+                                      TakePermission();
+
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -415,6 +427,45 @@ class _LoginState extends State<Login> {
       });
     }
   }
+
+
+  void TakePermission() async
+  {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
+    print("Storage permission is:${statuses[Permission.storage]}");
+
+    CreateDownloadFileDirectory();
+
+  }
+
+  void CreateDownloadFileDirectory() async
+  {
+
+    //This will get a directory path
+    var dir=await getExternalStorageDirectory();
+
+
+    //Check if Directory exists
+    if(await Directory(dir.path+"/musicappdj").exists())
+    {
+      print("Directory exists");
+    }
+    else
+      {
+        //This function creates a directory
+        var createDirectory =  await Directory(dir.path+"/musicappdj").create();
+        print("Newly create downloaded directory is:"+createDirectory.path);
+      }
+
+
+
+
+
+
+  }
+
 }
 
 class MainScreen extends StatelessWidget {

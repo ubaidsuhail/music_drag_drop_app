@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
+//import 'package:image_picker/image_picker.dart';
 import 'package:music_application/widgets/sharewidget.dart';
 import 'package:share_extend/share_extend.dart';
 import '../theme.dart';
@@ -71,11 +71,11 @@ class _ShareState extends State<Share> {
                           ),
                         ),
                         onPressed: () async {
-                          File f = await ImagePicker.pickVideo(
-                              source: ImageSource.gallery);
-                          if (f != null) {
-                            ShareExtend.share(f.path, "video");
-                          }
+//                          File f = await ImagePicker.pickVideo(
+//                              source: ImageSource.gallery);
+//                          if (f != null) {
+//                            ShareExtend.share(f.path, "video");
+//                          }
                         },
                         color: Colors.white,
                         shape: RoundedRectangleBorder(
