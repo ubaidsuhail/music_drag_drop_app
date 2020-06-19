@@ -174,10 +174,10 @@ class _LoginState extends State<Login> {
 
                                       TakePermission();
 
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Home()));
+//                                      Navigator.push(
+//                                          context,
+//                                          MaterialPageRoute(
+//                                              builder: (context) => Home()));
                                     }
                                   },
                                 ),
@@ -290,10 +290,10 @@ class _LoginState extends State<Login> {
 //
                                       TakePermission();
 
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Home()));
+//                                      Navigator.push(
+//                                          context,
+//                                          MaterialPageRoute(
+//                                              builder: (context) => Home()));
                                     }
                                   },
                                 )),
@@ -458,6 +458,12 @@ class _LoginState extends State<Login> {
         var createDirectory =  await Directory(dir.path+"/musicappdj").create();
         print("Newly create downloaded directory is:"+createDirectory.path);
       }
+
+      //This will sent to home page
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Home()));
 
 
 

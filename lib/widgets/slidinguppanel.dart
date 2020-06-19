@@ -51,8 +51,8 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
   TabController _controller;
   int currentPos;
   String stateText;
-  String apikey = 'AIzaSyDVklre5qoxkR7TVa11mp4Gr0B6yz1M8h4';
-  //String apikey = 'AIzaSyByk6OwDukiENI7QR6VKRuzi4ZDtKLRWdg';
+  //String apikey = 'AIzaSyDVklre5qoxkR7TVa11mp4Gr0B6yz1M8h4';
+  String apikey = 'AIzaSyByk6OwDukiENI7QR6VKRuzi4ZDtKLRWdg';
   TextEditingController search;
   YoutubePlayerController videoController;
   YoutubeAPI _youtubeAPI;
@@ -143,30 +143,57 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
     //print("Downloaded files path ${downloadedFiles}");
 
     for (int i = 0; i < downloadedFiles.length; i++) {
-//      final thumbnail = await _flutterVideoCompress.getThumbnail(
-//        downloadedFiles[0].path,
-//        quality: 50,
-//        //position: -1,
-//      );
 
-      final thumbnail = await VideoThumbnail.thumbnailData(
+      try
+      {
+        final thumbnail = await _flutterVideoCompress.getThumbnail(
+          downloadedFiles[i].path,
+          quality: 80,
+          position: -1,
+        );
+        print("thumbnail is ${thumbnail}");
+
+        print("Downloaded file path ${pt.basename(downloadedFiles[i].path)}");
+
+        downloadedFileImage.add(thumbnail);
+      }
+
+      catch(e)
+      {
+        final thumbnail = await VideoThumbnail.thumbnailData(
         video:downloadedFiles[i].path,
         imageFormat: ImageFormat.JPEG,
-        quality: 100,
+        quality: 80,
         maxWidth: 100,
         maxHeight: 100
         //position: -1,
       );
 
-      print("thumbnail is ${thumbnail}");
+        print("thumbnail is ${thumbnail}");
+
+        print("Downloaded file path ${pt.basename(downloadedFiles[i].path)}");
+
+        downloadedFileImage.add(thumbnail);
+      }
+
+//      final thumbnail = await VideoThumbnail.thumbnailData(
+//        video:downloadedFiles[i].path,
+//        imageFormat: ImageFormat.JPEG,
+//        quality: 100,
+//        maxWidth: 100,
+//        maxHeight: 100
+//        //position: -1,
+//      );
+
+
 //      setState(() {
 //        videoImg.add(thumbnail);
 //      });
 
       //print("Downloaded files path ${downloadedFiles}");
-      print("Downloaded file path ${pt.basename(downloadedFiles[i].path)}");
-
-    downloadedFileImage.add(thumbnail);
+//      print("Downloaded file path ${pt.basename(downloadedFiles[i].path)}");
+//
+//    downloadedFileImage.add(thumbnail);
     }
 
 
@@ -175,7 +202,7 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
       downloadedFileImage;
     });
 
-    print("hello");
+    //print("hello");
     //print("Downloaded Files are ${downloadedFiles}");
   }
 

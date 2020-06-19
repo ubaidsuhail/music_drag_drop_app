@@ -162,6 +162,7 @@ class DownloadYoutubeVideos extends StatelessWidget {
 
     //This will show Alert Dialog
     await pr.show();
+
 //    showDialog(
 //        context: context,
 //        builder: (context) {
@@ -197,7 +198,7 @@ class DownloadYoutubeVideos extends StatelessWidget {
     downloadFilePath=dir.path+"/musicappdj"+"/Vi${directoryDownloadedFilesList.length + 1}" + _yi_api.title + ".mp4";
 
 
-    //Assign path to write file object in which file is written
+   // Assign path to write file object in which file is written
     writeFile = File(downloadFilePath);
 
     bytes.asBroadcastStream().listen((List<int> event) {
