@@ -9,6 +9,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../theme.dart';
 import './login.dart';
+import 'package:music_application/staticclasses/staticdata.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -58,7 +59,8 @@ class _HomeState extends State<Home> {
           )
         ]),
       ),
-      body: Stack(children: <Widget>[
+      body: Stack(
+          children: <Widget>[
         Container(
           height: MediaQuery.of(context).size.height - 150,
           color: theme.primaryColor,
@@ -111,20 +113,12 @@ class _HomeState extends State<Home> {
         //   ),
         // ),
 
+        // ******** For Audio ******** //
         Padding(
-          padding: const EdgeInsets.only(top: 80),
+          padding: const EdgeInsets.only(top: 95),
           child: Align(
             alignment: Alignment.center,
-            child: DragTarget(
-              onAccept: (Color color) {
-                // caughtColor = color;
-              },
-              builder: (
-                BuildContext context,
-                List<dynamic> accepted,
-                List<dynamic> rejected,
-              ) {
-                return Container(
+            child:Container(
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height / 3,
                   decoration: BoxDecoration(
@@ -133,12 +127,7 @@ class _HomeState extends State<Home> {
                   ),
                   child: Column(
                     children: <Widget>[
-                      Image(
-                        image: AssetImage("assets/audio_icon.png"),
-                        height: 100,
-                        width: MediaQuery.of(context).size.width / 2,
-                        color: Colors.white,
-                      ),
+
                       AutoSizeText(
                         "Drop Audio Here",
                         style: GoogleFonts.roboto(
@@ -147,9 +136,17 @@ class _HomeState extends State<Home> {
                           color: theme.accentColor,
                         ),
                       ),
+
+                      Image(
+                        image: AssetImage("assets/audio_icon.png"),
+                        height: 100,
+                        width: MediaQuery.of(context).size.width / 2,
+                        color: Colors.white,
+                      ),
+
                     ],
                   ),
-                );
+                )
                 // return Container(
                 //   width: 200.0,
                 //   height: 200.0,
@@ -160,34 +157,21 @@ class _HomeState extends State<Home> {
                 //     child: Text("Drag Here!"),
                 //   ),
                 // );
-              },
+
             ),
           ),
-        ),
 
-        DragTarget(
-          onAccept: (Color color) {
-            // caughtColor = color;
-          },
-          builder: (
-            BuildContext context,
-            List<dynamic> accepted,
-            List<dynamic> rejected,
-          ) {
-            return Container(
-              width: double.infinity,
+    // ******** For Video ******** //
+       Container(
+         margin: EdgeInsets.only(top: 10.0),
+              width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 3,
-              decoration: BoxDecoration(
-                // color: accepted.isEmpty ? caughtColor : theme.accentColor,
-              ),
+              //color:Colors.blue,
+//              decoration: BoxDecoration(
+//                // color: accepted.isEmpty ? caughtColor : theme.accentColor,
+//              ),
               child: Column(
                 children: <Widget>[
-                  Image(
-                    image: AssetImage("assets/video_icon.png"),
-                    color: Colors.white,
-                    height: 100,
-                    width: MediaQuery.of(context).size.width / 2,
-                  ),
                   AutoSizeText(
                     "Drop Video Here",
                     style: GoogleFonts.roboto(
@@ -196,9 +180,89 @@ class _HomeState extends State<Home> {
                       color: theme.accentColor,
                     ),
                   ),
+
+
+//                  Image(
+//                    image: AssetImage("assets/video_icon.png"),
+//                    color: Colors.white,
+//                    height: 100,
+//                    width: MediaQuery.of(context).size.width / 2,
+//                  )
+
+                   Expanded(
+                   child:DragTarget(
+
+                     onAccept: (Map<String,dynamic> videoData) {
+
+                       StaticData.dragDropVideoList.add(videoData);
+                       print("Drag Drop List ${ StaticData.dragDropVideoList}");
+
+                      // print("Video image:${videoData["videoimage"]}");
+                       //print("Video path:${videoData["videopath"]}");
+                       print("Data accept");
+                     },
+
+                    builder: (
+                    BuildContext context,
+                    List<dynamic> accepted,
+                    List<dynamic> rejected,
+                    ) {
+                      return Container(
+                        margin: EdgeInsets.only(left: 10.0,right: 10.0,top: 5.0),
+                        width: MediaQuery.of(context).size.width,
+                        color: accepted.isEmpty ? theme.primaryColor : Colors.indigo[200],
+                        child:StaticData.dragDropVideoList.length !=0 ?
+                              //Agar dragdrop wali list ma data ha to kaam hoga
+                        ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: StaticData.dragDropVideoList.length,
+                              itemBuilder: (BuildContext context , int index){
+                                return GestureDetector(
+                                  onTap: ()
+                                  {
+                                  print("Tap Video Path is:${StaticData.dragDropVideoList[index]["videopath"]}");
+                                  },
+                                    child:Column(
+                                      children: <Widget>[
+                                        Container(
+                                            margin: EdgeInsets.only(left: 3.0,right: 3.0,top: 4.0),
+                                            child:Image.memory(
+                                              StaticData.dragDropVideoList[index]["videoimage"],
+                                              height: 130.0,
+                                              width: 130.0,
+                                              fit: BoxFit.fill,
+                                            )
+                                        ),
+//
+                                      ],
+                                    )
+                                );
+                              }
+                              )
+                              :
+                              Column(
+                                children: <Widget>[
+                                Image(
+                                  image: AssetImage("assets/video_icon.png"),
+                                  color: Colors.white,
+                                  height: 130,
+                                  width: MediaQuery.of(context).size.width / 2,
+                                ),
+                              ],),
+
+
+
+                      );
+                    }
+                   ),
+                   ),
+
+
+
+
                 ],
               ),
-            );
+
             // return Container(
             //   width: 200.0,
             //   height: 200.0,
@@ -209,11 +273,12 @@ class _HomeState extends State<Home> {
             //     child: Text("Drag Here!"),
             //   ),
             // );
-          },
-        ),
+       ),
+
         SlidingUpPanel(
           controller: controller,
           border: Border.all(color: theme.primaryColor),
+          maxHeight: MediaQuery.of(context).size.height * 0.5,
           panel: Padding(
             child: SlidingUpPanelTabs(
               controller: controller,
@@ -227,7 +292,7 @@ class _HomeState extends State<Home> {
               topRight: Radius.circular(
                 40.0,
               )),
-          backdropEnabled: true,
+          //backdropEnabled: true,
           collapsed: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[

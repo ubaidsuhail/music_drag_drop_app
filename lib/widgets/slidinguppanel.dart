@@ -522,35 +522,51 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
                               itemBuilder: (context, index) {
                                 return Card(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: ListTile(
-                                    //leading: Image.network(
-//                                          'https://www.dailymotion.com/thumbnail/video/${data[index]['id']}',
-//                                          height: 100.0,
-//                                          width: 100.0),
+                                    padding: const EdgeInsets.only(left: 10.0,right: 25.0,top: 8.0,bottom: 8.0),
+                                    child: Draggable(
+                                      data:{"videoimage":downloadedFileImage[index],"videopath":downloadedFiles[index].path} ,
+                                      child:ListTile(
                                       leading: Image.memory(
                                         downloadedFileImage[index],
                                         height: 100.0,
                                         width: 100.0,
+                                        fit: BoxFit.fill,
                                       ),
 //
                                       title: Text(pt.basenameWithoutExtension(downloadedFiles[index].path)),
 //                                      subtitle:
 //                                          Text('${data[index]['channel']}'),
-                                      onTap: () {
-//                                        Navigator.push(
-//                                            context,
-//                                            MaterialPageRoute(
-//                                                builder: (context) =>
-//                                                    PlayerForDailymotion(
-//                                                        url:
-//                                                            'https://www.dailymotion.com/embed/video/${data[index]['id']}')
-//                                            ));
+
+                                      onTap: (){
+
                                       },
+                                    ),
+                                    feedback: Material(
+                                      child: ConstrainedBox(
+                                        constraints:
+                                        BoxConstraints(maxWidth: MediaQuery.of(context).size.width*0.9),
+                                        child: ListTile(
+                                          leading: Image.memory(
+                                            downloadedFileImage[index],
+                                            height: 100.0,
+                                            width: 100.0,
+                                            fit: BoxFit.fill,
+                                          ),
+//
+                                          title: Text(pt.basenameWithoutExtension(downloadedFiles[index].path)),
+//                                      subtitle:
+//                                          Text('${data[index]['channel']}'),
+                                        ),
+                                      ),
+                                      elevation: 6.0,
+                                    ),
                                     ),
                                   ),
                                 );
-                              })
+
+
+                              }
+                              )
                           :
                              Center(child:CircularProgressIndicator())
                           :
