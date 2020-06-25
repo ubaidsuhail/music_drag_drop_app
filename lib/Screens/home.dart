@@ -10,6 +10,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 import '../theme.dart';
 import './login.dart';
 import 'package:music_application/staticclasses/staticdata.dart';
+import 'package:music_application/videoediting/videotrim.dart';
+import 'package:video_trimmer/video_trimmer.dart';
+import 'dart:io';
+
 
 class Home extends StatefulWidget {
   @override
@@ -221,6 +225,8 @@ class _HomeState extends State<Home> {
                                   onTap: ()
                                   {
                                   print("Tap Video Path is:${StaticData.dragDropVideoList[index]["videopath"]}");
+
+                                  TrimVideo(StaticData.dragDropVideoList[index]["videopath"],index);
                                   },
                                     child:Column(
                                       children: <Widget>[
@@ -341,4 +347,20 @@ class _HomeState extends State<Home> {
       ).show();
     }
   }
+
+
+  //This method sent to video trim dart file
+  void TrimVideo(String videoPath,int videoIndex) async
+  {
+    final Trimmer _trimmerObject = Trimmer();
+
+    await _trimmerObject.loadVideo(videoFile: File(videoPath));
+
+    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(
+            builder: (context) => VideoTrim(trimmer:_trimmerObject , videopath:videoPath , videoindex:videoIndex)));
+
+
+  }
+
 }

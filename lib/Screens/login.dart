@@ -459,11 +459,14 @@ class _LoginState extends State<Login> {
         print("Newly create downloaded directory is:"+createDirectory.path);
       }
 
-      //This will sent to home page
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Home()));
+
+      CreateTrimVideosDirectory();
+
+//      //This will sent to home page
+//    Navigator.push(
+//        context,
+//        MaterialPageRoute(
+//            builder: (context) => Home()));
 
 
 
@@ -471,6 +474,36 @@ class _LoginState extends State<Login> {
 
 
   }
+
+  //Create Trim Videos Directory
+  void CreateTrimVideosDirectory() async
+  {
+    //This will get a directory path
+    var dir=await getExternalStorageDirectory();
+
+
+    //Check if Directory exists
+    if(await Directory(dir.path+"/trimvideos").exists())
+    {
+      print("Directory exists");
+    }
+    else
+    {
+      //This function creates a directory
+      var createDirectory =  await Directory(dir.path+"/trimvideos").create();
+      print("Newly create downloaded directory is:"+createDirectory.path);
+    }
+
+    //This will sent to home page
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Home()));
+
+
+
+  }
+
 
 }
 
