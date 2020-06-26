@@ -13,6 +13,7 @@ import 'package:music_application/staticclasses/staticdata.dart';
 import 'package:music_application/videoediting/videotrim.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 import 'dart:io';
+import 'package:music_application/videoediting/videoplay.dart';
 
 
 class Home extends StatefulWidget {
@@ -226,7 +227,8 @@ class _HomeState extends State<Home> {
                                   {
                                   print("Tap Video Path is:${StaticData.dragDropVideoList[index]["videopath"]}");
 
-                                  TrimVideo(StaticData.dragDropVideoList[index]["videopath"],index);
+                                  //TrimVideo(StaticData.dragDropVideoList[index]["videopath"],index);
+                                    VideoAlert(StaticData.dragDropVideoList[index]["videopath"],index);
                                   },
                                     child:Column(
                                       children: <Widget>[
@@ -349,6 +351,82 @@ class _HomeState extends State<Home> {
   }
 
 
+  void VideoAlert(String videoPath,int index)
+  {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Padding(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.45,bottom:MediaQuery.of(context).size.height*0.43,left: 6.0,right: 6.0),
+              child:Container(
+                width: double.maxFinite,
+                color: Colors.grey[400],
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+
+                          //For Play Video
+                        Container(
+                          padding: EdgeInsets.only(top:2.0),
+                          margin: EdgeInsets.only(left: 15.0),
+                          child:GestureDetector(
+                              onTap: (){
+                                Navigator.pop(context);
+                                PlayVideo(videoPath);
+                            },
+                        child:SingleChildScrollView(
+                        child:Column(
+                            children: <Widget>[
+                              Icon(Icons.play_arrow,size: 30.0,),
+                              Text("Play",style: TextStyle(fontSize: 12.0,decoration: TextDecoration.none,color: Colors.black),),
+
+
+                            ],
+                            )
+                            )
+                          )
+                        ),
+
+                        //For Trim Video
+                        Container(
+                            padding: EdgeInsets.only(top:2.0),
+                            margin: EdgeInsets.only(left: 25.0),
+                            child:GestureDetector(
+                                onTap: (){
+                                  Navigator.pop(context);
+                                  TrimVideo(videoPath,index);
+                                },
+                                child:SingleChildScrollView(
+                                    child:Column(
+                                      children: <Widget>[
+                                        Icon(Icons.blur_off,size: 30.0,),
+                                        Text("Trim",style: TextStyle(fontSize: 12.0,decoration: TextDecoration.none,color: Colors.black),),
+
+
+                                      ],
+                                    )
+                                )
+                            )
+                        ),
+
+
+
+
+
+
+
+
+                  ],
+                ),
+              )
+          );
+        }
+    );
+  }
+
+
+
+
   //This method sent to video trim dart file
   void TrimVideo(String videoPath,int videoIndex) async
   {
@@ -361,6 +439,14 @@ class _HomeState extends State<Home> {
             builder: (context) => VideoTrim(trimmer:_trimmerObject , videopath:videoPath , videoindex:videoIndex)));
 
 
+  }
+
+  //This method send to Play Video dart file
+  void PlayVideo(String videoPath)
+  {
+    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(
+        builder: (context) => VideoPlay(videopath:videoPath)));
   }
 
 }

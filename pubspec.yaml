@@ -46,6 +46,7 @@ dependencies:
   progress_dialog: ^1.2.4
   fluttertoast: ^4.0.0
   video_trimmer: ^0.2.4
+  flutter_ffmpeg: ^0.2.10
 
 
 

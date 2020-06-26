@@ -10,6 +10,7 @@ import 'package:nice_button/nice_button.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:music_application/Screens/home.dart';
+import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';
 
 class DownloadGalleryVideos extends StatefulWidget {
   String galleryVideoPath = "";
@@ -32,6 +33,7 @@ class _DownloadGalleryVideosState extends State<DownloadGalleryVideos> {
   int sum=0;
   VideoPlayerController _controller;
   ProgressDialog pr;
+  final FlutterFFmpeg _flutterFFmpegRemoveAudio = new FlutterFFmpeg();
 
 
   @override
@@ -170,44 +172,79 @@ void DownloadGalleryVideos(BuildContext context) async
     galleryFileName = pt.basenameWithoutExtension(galleryFilePath.path);
     print("Gallery file name ${galleryFileName}");
 
-    //Convert file data in to streams
-    bytes =  ByteStream(DelegatingStream.typed(galleryFilePath.openRead()));
+//    //Convert file data in to streams(if we download file)
+//    bytes =  ByteStream(DelegatingStream.typed(galleryFilePath.openRead()));
 
     //Path where to download file
     downloadFilePath=dir.path+"/musicappdj"+"/Vi${directoryDownloadedFilesList.length + 1}" + galleryFileName + ".mp4";
 
 
-    //Assign path to write file object in which file is written
-    writeFile = File(downloadFilePath);
+//    //Assign path to write file object in which file is written
+//    writeFile = File(downloadFilePath);
 
 
     //Write streams in to file which means download file
-    bytes.asBroadcastStream().listen((List<int> event) {
-      writeFile.writeAsBytesSync(event,mode:FileMode.append);
-      sum=sum+event.length;
-      print("sum is: "+sum.toString());
-    },
-    onDone : (){
-       print("Downloading Complete");
-       Navigator.of(context, rootNavigator: true).pop();
+//    bytes.asBroadcastStream().listen((List<int> event) {
+//      writeFile.writeAsBytesSync(event,mode:FileMode.append);
+//      sum=sum+event.length;
+//      print("sum is: "+sum.toString());
+//    },
+//    onDone : (){
+//       print("Downloading Complete");
+//       Navigator.of(context, rootNavigator: true).pop();
+//
+//       Fluttertoast.showToast(
+//           msg: "Downloading Complete",
+//           toastLength: Toast.LENGTH_SHORT,
+//           gravity: ToastGravity.BOTTOM,
+//           timeInSecForIosWeb: 1,
+//           backgroundColor: Colors.blue[300],
+//           textColor: Colors.white,
+//           fontSize: 16.0
+//       );
+//
+//
+//       //Navigator.pop(context);
+//      }
+//    );
 
-       Fluttertoast.showToast(
-           msg: "Downloading Complete",
-           toastLength: Toast.LENGTH_SHORT,
-           gravity: ToastGravity.BOTTOM,
-           timeInSecForIosWeb: 1,
-           backgroundColor: Colors.blue[300],
-           textColor: Colors.white,
-           fontSize: 16.0
-       );
+
+   //By using ffmpeg download video without audio or emove audio from video
+
+    _flutterFFmpegRemoveAudio.execute("-i ${galleryFilePath.path} -c copy -an ${downloadFilePath}").then((rc){
+        print("FFmpeg process exited with rc $rc");
+        if(rc == 0)
+          {
+            Navigator.of(context, rootNavigator: true).pop();
+
+            Fluttertoast.showToast(
+            msg: "Downloading Complete",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.blue[300],
+            textColor: Colors.white,
+            fontSize: 16.0
+           );
+          }
+
+          else
+            {
+              Navigator.of(context, rootNavigator: true).pop();
+
+              Fluttertoast.showToast(
+                  msg: "Error in Downloading",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.blue[300],
+                  textColor: Colors.white,
+                  fontSize: 16.0
+              );
+            }
 
 
-       //Navigator.pop(context);
-      }
-    );
-
-
-
+    });
 
   }
 
