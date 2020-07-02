@@ -494,15 +494,46 @@ class _LoginState extends State<Login> {
       print("Newly create downloaded directory is:"+createDirectory.path);
     }
 
+    CreateSaveFinalVideosDirectory();
+
+//    //This will sent to home page
+//    Navigator.push(
+//        context,
+//        MaterialPageRoute(
+//            builder: (context) => Home()));
+
+
+
+  }
+
+
+  //Create Save Final Videos Directory
+  void CreateSaveFinalVideosDirectory() async
+  {
+    //This will get a directory path
+    var dir=await getExternalStorageDirectory();
+
+
+    //Check if Directory exists
+    if(await Directory(dir.path+"/savefinalvideos").exists())
+    {
+      print("Directory exists");
+    }
+    else
+    {
+      //This function creates a directory
+      var createDirectory =  await Directory(dir.path+"/savefinalvideos").create();
+      print("Newly create downloaded directory is:"+createDirectory.path);
+    }
+
     //This will sent to home page
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => Home()));
 
-
-
   }
+
 
 
 }

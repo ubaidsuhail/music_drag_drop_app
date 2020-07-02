@@ -22,6 +22,7 @@ class DownloadYoutubeVideos extends StatelessWidget {
   File writeFile;
   int sum=0;
   ProgressDialog pr;
+  String videoTitle = "";
 
   DownloadYoutubeVideos(YT_API api, BuildContext context) {
     //onTap(api, context);
@@ -194,8 +195,11 @@ class DownloadYoutubeVideos extends StatelessWidget {
     //This will convert manifest stream to streams
     bytes =  youtubeVideo.videos.streamsClient.get(videoWithoutAudio.toList()[0]);
 
+    //This will get the title of youtube video and replace empty space with -
+    videoTitle = _yi_api.title.replaceAll(" ", "_");
+
     //Path where to download file
-    downloadFilePath=dir.path+"/musicappdj"+"/Vi${directoryDownloadedFilesList.length + 1}" + _yi_api.title + ".mp4";
+    downloadFilePath=dir.path+"/musicappdj"+"/Vi${directoryDownloadedFilesList.length + 1}" + videoTitle + ".mp4";
 
 
    // Assign path to write file object in which file is written

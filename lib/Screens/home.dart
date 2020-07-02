@@ -14,6 +14,9 @@ import 'package:music_application/videoediting/videotrim.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 import 'dart:io';
 import 'package:music_application/videoediting/videoplay.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
+import 'package:music_application/videoediting/videosync.dart';
 
 
 class Home extends StatefulWidget {
@@ -126,10 +129,6 @@ class _HomeState extends State<Home> {
             child:Container(
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height / 3,
-                  decoration: BoxDecoration(
-                    // color: accepted.isEmpty ? caughtColor : theme.primaryColor
-
-                  ),
                   child: Column(
                     children: <Widget>[
 
@@ -142,12 +141,49 @@ class _HomeState extends State<Home> {
                         ),
                       ),
 
+                      GestureDetector(
+
+                        onTap: (){
+                          GetAudio();
+                        },
+
+                      child:
+                      StaticData.audioFilePath == "" ?
                       Image(
                         image: AssetImage("assets/audio_icon.png"),
                         height: 100,
                         width: MediaQuery.of(context).size.width / 2,
                         color: Colors.white,
-                      ),
+                      )
+                          :
+                        Container(
+                          margin: EdgeInsets.only(left: 10.0,right:10.0),
+                          height: MediaQuery.of(context).size.height * 0.1,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.purple[200],),
+                                borderRadius: BorderRadius.all(Radius.circular(14)),
+                                color:Colors.brown,
+                            ),
+                         child:Row(
+                           mainAxisAlignment: MainAxisAlignment.center,
+                           children: <Widget>[
+                             Text("Audio File",style: TextStyle(fontSize: 30.0),),
+                             Padding(
+                               //width: MediaQuery.of(context).size.width*0.1,
+
+                               padding: EdgeInsets.only(left: 50.0),
+                             child:GestureDetector(
+                               onTap:(){
+                                 RemoveAudio();
+                               },
+                             child:Icon(Icons.cancel,color: Colors.red,size: 35.0,)
+                             ),
+                             )
+                           ],
+                         )
+                        )
+                      )
 
                     ],
                   ),
@@ -410,6 +446,27 @@ class _HomeState extends State<Home> {
                         ),
 
 
+                      //For Sync Video and Audio
+                        Container(
+                            padding: EdgeInsets.only(top:2.0),
+                            margin: EdgeInsets.only(left: 25.0),
+                            child:GestureDetector(
+                                onTap: (){
+                                  Navigator.pop(context);
+                                  SyncVideo(videoPath);
+                                },
+                                child:SingleChildScrollView(
+                                    child:Column(
+                                      children: <Widget>[
+                                        Icon(Icons.sync,size: 30.0,),
+                                        Text("Sync",style: TextStyle(fontSize: 12.0,decoration: TextDecoration.none,color: Colors.black),),
+
+
+                                      ],
+                                    )
+                                )
+                            )
+                        ),
 
 
 
@@ -448,5 +505,104 @@ class _HomeState extends State<Home> {
     Navigator.push(context, MaterialPageRoute(
         builder: (context) => VideoPlay(videopath:videoPath)));
   }
+
+
+  //This method will get audio with the help of file picker
+
+  void GetAudio() async
+  {
+    try {
+      StaticData.audioFilePath = await FilePicker.getFilePath(
+          type: FileType.custom,allowedExtensions: ['mp3','aac']);
+
+      print("Audio path ${StaticData.audioFilePath}");
+
+      if(StaticData.audioFilePath == null)
+        {
+          StaticData.audioFilePath = "";
+        }
+
+      setState(() {
+        StaticData.audioFilePath;
+      });
+
+    } on PlatformException catch (e) {
+      print("Unsupported operation" + e.toString());
+    }
+  }
+
+  //This will remove the audio path
+  void RemoveAudio()
+  {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+            title: Text(
+              "Alert",
+            ),
+            content: Text("Do you want to remove Audio..."),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Yes"),
+                onPressed: () {
+
+                  setState(() {
+                    StaticData.audioFilePath = "";
+                  });
+                  Navigator.pop(context);
+                  },
+              ),
+              FlatButton(
+                child: Text("No"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+
+  //This will goes to Sync Audio Video File
+
+  void SyncVideo(String videoPath)
+  {
+    if(StaticData.audioFilePath == "")
+      {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                title: Text(
+                  "OOPS!",
+                ),
+                content: Text("Please add an audio"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("OK"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+
+                ],
+              );
+            });
+      }
+
+      else
+        {
+          Navigator.pop(context);
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => VideoSync(videopath:videoPath,audiopath:StaticData.audioFilePath)));
+        }
+  }
+
+
+
 
 }

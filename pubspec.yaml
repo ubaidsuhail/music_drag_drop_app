@@ -47,6 +47,7 @@ dependencies:
   fluttertoast: ^4.0.0
   video_trimmer: ^0.2.4
   flutter_ffmpeg: ^0.2.10
+  file_picker: ^1.12.0
 
 
 
