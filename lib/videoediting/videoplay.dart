@@ -3,11 +3,13 @@ import 'package:music_application/Screens/home.dart';
 import 'package:video_player/video_player.dart';
 import 'package:music_application/chewie_plugin/chewie_list_item.dart';
 import 'dart:io';
-
+import 'package:share/share.dart';
+import 'package:share_extend/share_extend.dart';
 class VideoPlay extends StatefulWidget {
   String videopath;
+  int shareoption = 0;
 
-  VideoPlay({this.videopath});
+  VideoPlay({this.videopath,this.shareoption});
 
   @override
   _VideoPlayState createState() => _VideoPlayState();
@@ -43,7 +45,23 @@ class _VideoPlayState extends State<VideoPlay> {
           child: Icon(Icons.arrow_back),
         ),
 
-        title:Text("Video Player"),
+        title:Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text("Video Player"),
+            widget.shareoption == 1 ?
+            GestureDetector(
+              onTap: (){
+                ShareVideo();
+              },
+
+              child: Text("Share"),
+            )
+                :
+            Text(""),
+          ],
+        ),
+
       ),
 
         body: SingleChildScrollView(
@@ -68,4 +86,23 @@ class _VideoPlayState extends State<VideoPlay> {
       },
     );
   }
+
+
+  void ShareVideo()
+  {
+    _controller.pause();
+    print("Share Video");
+
+    final RenderBox box = context.findRenderObject();
+    //It shre text,videos
+//    Share.share(widget.videopath,
+//        subject: "why",
+//        sharePositionOrigin:
+//        box.localToGlobal(Offset.zero) &
+//        box.size);
+
+    //It share videos
+   ShareExtend.share(widget.videopath, "Music App");
+  }
+
 }

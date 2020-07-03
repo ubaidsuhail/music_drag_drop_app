@@ -28,7 +28,7 @@ dependencies:
   sliding_up_panel: ^1.0.0
   firebase_auth: ^0.14.0+5
   google_sign_in: ^4.1.4
-  share_extend: ^1.1.1
+  share: ^0.6.4+3
   rflutter_alert: ^1.0.3
   flutter_launcher_icons: ^0.7.4
   youtube_player_flutter: ^6.1.0+4
@@ -48,6 +48,7 @@ dependencies:
   video_trimmer: ^0.2.4
   flutter_ffmpeg: ^0.2.10
   file_picker: ^1.12.0
+  share_extend: ^1.1.9
 
 
 

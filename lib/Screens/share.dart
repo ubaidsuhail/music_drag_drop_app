@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 //import 'package:image_picker/image_picker.dart';
 import 'package:music_application/widgets/sharewidget.dart';
-import 'package:share_extend/share_extend.dart';
+//import 'package:share_extend/share_extend.dart';
 import '../theme.dart';
 
 class Share extends StatefulWidget {

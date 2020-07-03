@@ -17,6 +17,7 @@ import 'package:music_application/videoediting/videoplay.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:music_application/videoediting/videosync.dart';
+import 'package:music_application/Screens/savevideos.dart';
 
 
 class Home extends StatefulWidget {
@@ -54,15 +55,10 @@ class _HomeState extends State<Home> {
           ),
           Spacer(),
           InkWell(
-            child: Image.asset(
-              "assets/checkmark.png",
-              color: theme.primaryColor,
-              height: 40,
-              width: 40,
-            ),
+            child: Icon(Icons.music_video,size: 50,),
             onTap: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Share()));
+                  context, MaterialPageRoute(builder: (context) => SaveVideos()));
             },
           )
         ]),
@@ -503,7 +499,7 @@ class _HomeState extends State<Home> {
   {
     Navigator.pop(context);
     Navigator.push(context, MaterialPageRoute(
-        builder: (context) => VideoPlay(videopath:videoPath)));
+        builder: (context) => VideoPlay(videopath:videoPath,shareoption:0)));
   }
 
 
