@@ -526,6 +526,37 @@ class _LoginState extends State<Login> {
       print("Newly create downloaded directory is:"+createDirectory.path);
     }
 
+
+    CreateMixVideosDirectory();
+
+//    //This will sent to home page
+//    Navigator.push(
+//        context,
+//        MaterialPageRoute(
+//            builder: (context) => Home()));
+
+  }
+
+
+  //Create Mix Videos Directory
+  void CreateMixVideosDirectory() async
+  {
+    //This will get a directory path
+    var dir=await getExternalStorageDirectory();
+
+
+    //Check if Directory exists
+    if(await Directory(dir.path+"/mixvideos").exists())
+    {
+      print("Directory exists");
+    }
+    else
+    {
+      //This function creates a directory
+      var createDirectory =  await Directory(dir.path+"/mixvideos").create();
+      print("Newly create downloaded directory is:"+createDirectory.path);
+    }
+
     //This will sent to home page
     Navigator.push(
         context,
@@ -533,6 +564,7 @@ class _LoginState extends State<Login> {
             builder: (context) => Home()));
 
   }
+
 
 
 

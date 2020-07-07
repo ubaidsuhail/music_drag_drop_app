@@ -18,6 +18,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:music_application/videoediting/videosync.dart';
 import 'package:music_application/Screens/savevideos.dart';
+import 'package:music_application/videoediting/videomix.dart';
 
 
 class Home extends StatefulWidget {
@@ -260,7 +261,7 @@ class _HomeState extends State<Home> {
                                   print("Tap Video Path is:${StaticData.dragDropVideoList[index]["videopath"]}");
 
                                   //TrimVideo(StaticData.dragDropVideoList[index]["videopath"],index);
-                                    VideoAlert(StaticData.dragDropVideoList[index]["videopath"],index);
+                                    VideoAlert(StaticData.dragDropVideoList[index]["videopath"],index,StaticData.dragDropVideoList[index]["videoimage"]);
                                   },
                                     child:Column(
                                       children: <Widget>[
@@ -383,7 +384,7 @@ class _HomeState extends State<Home> {
   }
 
 
-  void VideoAlert(String videoPath,int index)
+  void VideoAlert(String videoPath,int index,List videoImage)
   {
     showDialog(
         context: context,
@@ -456,6 +457,30 @@ class _HomeState extends State<Home> {
                                       children: <Widget>[
                                         Icon(Icons.sync,size: 30.0,),
                                         Text("Sync",style: TextStyle(fontSize: 12.0,decoration: TextDecoration.none,color: Colors.black),),
+
+
+                                      ],
+                                    )
+                                )
+                            )
+                        ),
+
+
+                        //For Mix Video
+                        Container(
+                            padding: EdgeInsets.only(top:2.0),
+                            margin: EdgeInsets.only(left: 25.0),
+                            child:GestureDetector(
+                                onTap: (){
+                                  Navigator.pop(context);
+                                  //SyncVideo(videoPath);
+                                  MixVideo(videoPath,videoImage);
+                                },
+                                child:SingleChildScrollView(
+                                    child:Column(
+                                      children: <Widget>[
+                                        Icon(Icons.cast,size: 30.0,),
+                                        Text("Mix",style: TextStyle(fontSize: 12.0,decoration: TextDecoration.none,color: Colors.black),),
 
 
                                       ],
@@ -599,6 +624,13 @@ class _HomeState extends State<Home> {
   }
 
 
+   void MixVideo(String videoPath , List videoImage)
+   {
+     StaticData.mixVideoList.add({"videopath":videoPath,"videoimage":videoImage});
+     Navigator.push(context, MaterialPageRoute(
+         builder: (context) => VideoMix()));
+
+   }
 
 
 }
