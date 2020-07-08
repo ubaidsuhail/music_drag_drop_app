@@ -31,6 +31,7 @@ class _HomeState extends State<Home> {
   PanelController controller = PanelController();
   final GoogleSignIn _googleSignIn = new GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool duplicateMixVideo = true;
 
   @override
   Widget build(BuildContext context) {
@@ -626,9 +627,60 @@ class _HomeState extends State<Home> {
 
    void MixVideo(String videoPath , List videoImage)
    {
-     StaticData.mixVideoList.add({"videopath":videoPath,"videoimage":videoImage});
-     Navigator.push(context, MaterialPageRoute(
-         builder: (context) => VideoMix()));
+//     StaticData.mixVideoList.add({"videopath":videoPath,"videoimage":videoImage,"videoindex":videoIndex});
+//     Navigator.push(context, MaterialPageRoute(
+//         builder: (context) => VideoMix()));
+
+
+
+     if(StaticData.mixVideoList.length == 0)
+       {
+         StaticData.mixVideoList.add({"videopath":videoPath,"videoimage":videoImage});
+
+         Navigator.pop(context);
+         Navigator.push(context, MaterialPageRoute(
+             builder: (context) => VideoMix()));
+       }
+
+       else
+         {
+           for(int i=0;i<StaticData.mixVideoList.length;i++)
+             {
+               if(StaticData.mixVideoList[i]["videopath"] == videoPath)
+                 {
+                   //If the same video already load in list then duplicatemixvideo is true
+                   duplicateMixVideo = true;
+                   break;
+                 }
+
+                 else
+                   {
+                     //If the same video not load in list then duplicatemixvideo is false
+                     duplicateMixVideo = false;
+                   }
+             }
+
+
+             if(duplicateMixVideo)
+               {
+                 Navigator.pop(context);
+                 Navigator.push(context, MaterialPageRoute(
+                     builder: (context) => VideoMix()));
+               }
+
+               else
+                 {
+                   StaticData.mixVideoList.add({"videopath":videoPath,"videoimage":videoImage});
+
+                   Navigator.pop(context);
+                   Navigator.push(context, MaterialPageRoute(
+                       builder: (context) => VideoMix()));
+
+                 }
+
+         }
+
+
 
    }
 
