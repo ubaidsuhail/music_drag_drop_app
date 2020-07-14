@@ -11,7 +11,7 @@ import 'dart:typed_data';
 import 'package:storage_path/storage_path.dart';
 import 'package:flutter_video_compress/flutter_video_compress.dart';
 import 'package:webview_media/webview_flutter.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:music_application/downloadvideos/downloadgalleryvideos.dart';
 import 'package:music_application/downloadvideos/downloadyoutubevideos.dart';
@@ -19,7 +19,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as pt;
 import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:nice_button/nice_button.dart';
-
+import 'dart:convert';
+import 'package:music_application/downloadvideos/downloadtiktokvideos.dart';
 
 
 
@@ -54,6 +55,7 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
   //String apikey = 'AIzaSyDVklre5qoxkR7TVa11mp4Gr0B6yz1M8h4';
   String apikey = 'AIzaSyByk6OwDukiENI7QR6VKRuzi4ZDtKLRWdg';
   TextEditingController search;
+  TextEditingController searchTikTok;
   YoutubePlayerController videoController;
   YoutubeAPI _youtubeAPI;
   List<YT_API> you_res;
@@ -67,6 +69,14 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
   List downloadedFiles = List();
   List<Uint8List> downloadedFileImage = [];
   var dir;
+  String tikTokUrl = "";
+  Map<String,String> tikTokApiKeyParameter = {"X-RapidAPI-Host":"tiktok.p.rapidapi.com","X-RapidAPI-Key":"787214f48cmshe9863c5e8296b29p13634bjsn291c26473af0"};
+  Response tikTokApiResponse;
+  Map<String,dynamic> tikTokKeyValues;
+  List tikTokDataList = [];
+  String tikTokApiError = "";
+
+
 
   Icon cusIcon = Icon(
     Icons.search,
@@ -86,16 +96,38 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
     onPressed: () {},
   );
 
+
+  Widget barForTikTok = Image.asset(
+    'assets/tiktok.png',
+    width: 98.0,
+    height: 22.0,
+  );
+
+  Icon cusIconTikTok = Icon(
+    Icons.search,
+    color: Colors.grey,
+  );
+
+
+
+
   bool onSearch = true;
+  bool onSearchTikTok = true;
 
   @override
   void initState() {
     currentPos = 0;
     stateText = "Video not started";
     super.initState();
-    _controller = new TabController(length: 3, vsync: this);
+    _controller = new TabController(length: 4, vsync: this);
 
     search = TextEditingController();
+    searchTikTok = TextEditingController();
+
+    //TikTok videos
+
+    TikTokVideos("");
+
     _youtubeAPI = YoutubeAPI(apikey, type: 'video', maxResults: 30);
     you_res = [];
     videoitem = [];
@@ -111,6 +143,72 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
     GetDownloadedFiles();
 
   }
+
+
+  //For Tik Tok Videos
+  void TikTokVideos(String username) async
+  {
+
+    if(username == "")
+      {
+        tikTokUrl = "https://tiktok.p.rapidapi.com/live/trending/feed?limit=15";
+      }
+
+     else
+       {
+        tikTokUrl = "https://tiktok.p.rapidapi.com/live/user/feed?username=$username&limit=15";
+       }
+
+       tikTokApiResponse = await get(tikTokUrl,headers:tikTokApiKeyParameter);
+
+
+     print("tik tok api response:${tikTokApiResponse.body}");
+     print("tik tok status code:${tikTokApiResponse.statusCode}");
+
+     //Agar sahi data aya to ya aiga
+     if(tikTokApiResponse.statusCode == 200)
+       {
+
+         tikTokKeyValues = jsonDecode(tikTokApiResponse.body);
+
+         if(tikTokKeyValues["media"].length == 0)
+           {
+             tikTokDataList = [];
+             tikTokApiError = "Please enter correct user name";
+           }
+           else
+             {
+               tikTokDataList = tikTokKeyValues["media"];
+               tikTokApiError = "";
+             }
+
+
+         print("Tik tok data list ${tikTokDataList}");
+         print("tik tok data list length ${tikTokDataList.length}");
+
+
+       }
+
+      else if(tikTokApiResponse.statusCode == 404)
+        {
+          tikTokDataList = [];
+          tikTokApiError = "Please enter correct user name";
+        }
+
+       else if(tikTokApiResponse.statusCode == 429)
+         {
+           tikTokDataList = [];
+           tikTokApiError = "Tik tok api not working";
+         }
+
+
+        setState(() {
+          tikTokApiError;
+          tikTokDataList;
+        });
+
+     }
+
 
   Future<Null> callApi(String query) async {
     if (you_res.isNotEmpty) {
@@ -287,7 +385,7 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       initialIndex: 0,
       child: new Scaffold(
         body: new Column(
@@ -300,6 +398,9 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
               tabs: [
                 new Tab(
                   text: 'Gallery',
+                ),
+                new Tab(
+                  text: 'TikTok',
                 ),
                 new Tab(
                   icon: Image.asset(
@@ -340,47 +441,108 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
                     },
                   ),
 
-//                  videoImg.length == videoName.length && videoName.length != 0
-//                      ? new GridView.count(
-//                          crossAxisCount: 2,
-//                          children: List.generate(paths.length, (index) {
-//                            return Card(
-//                              shape: RoundedRectangleBorder(
-//                                borderRadius: BorderRadius.circular(10.0),
-//                              ),
-//                              elevation: 10.0,
-//                              child: Container(
-//                                child: Column(
-//                                  mainAxisAlignment: MainAxisAlignment.start,
-//                                  crossAxisAlignment: CrossAxisAlignment.start,
-//                                  children: <Widget>[
-//                                    ClipRRect(
-//                                      borderRadius: BorderRadius.only(
-//                                          topLeft: Radius.circular(10.0),
-//                                          topRight: Radius.circular(10.0),
-//                                          bottomLeft: Radius.zero,
-//                                          bottomRight: Radius.zero),
-//                                      child: Image.memory(
-//                                        videoImg[index],
-//                                        height: 150.0,
-//                                        width: 180.0,
-//                                        fit: BoxFit.cover,
-//                                      ),
-//                                    ),
-//                                    AutoSizeText(
-//                                      '${videoName[index]}',
-//                                      style: TextStyle(
-//                                        fontSize: 16.0,
-//                                      ),
-//                                      maxLines: 1,
-//                                    ),
-//                                  ],
-//                                ),
-//                              ),
-//                            );
-//                          }),
-//                        )
-//                      : Center(child: Text("Videos not found!")),
+                  //For Tik Tok videos Start
+
+              Scaffold(
+                appBar: AppBar(
+                  leading: Container(),
+                  backgroundColor: Colors.white,
+                  title: barForTikTok,
+                  actions: <Widget>[
+                    IconButton(
+                      icon: cusIconTikTok,
+                      onPressed: () {
+                        setState(() {
+                          if (this.cusIconTikTok.icon == Icons.search) {
+                            this.cusIconTikTok = Icon(
+                              Icons.cancel,
+                              color: Colors.grey,
+                            );
+                            this.barForTikTok = TextFormField(
+                              textInputAction: TextInputAction.go,
+                              decoration: InputDecoration(
+                                contentPadding:
+                                EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+                                hintText: 'Search tiktoker user name',
+                              ),
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: Colors.black,
+                              ),
+                              controller: searchTikTok,
+                              onFieldSubmitted: (String username) async {
+                                TikTokVideos(username);
+                              },
+                            );
+                            setState(() {
+                              onSearchTikTok = !onSearchTikTok;
+                            });
+                          } else {
+                            this.cusIconTikTok = Icon(
+                              Icons.search,
+                              color: Colors.grey,
+                            );
+                            setState(() {
+                              onSearchTikTok = true;
+                              searchTikTok.clear();
+                            });
+                          }
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                body:Container(
+                    child: tikTokApiError == "" ?
+                    ListView.builder(
+                        itemCount: tikTokDataList.length,
+                        itemBuilder: (context, index) {
+                         return Container(
+                            color: Colors.white,
+                            child: Card(
+                              child: ListTile(
+                                leading: Image.network(tikTokDataList[index]["video"]["cover"],width: MediaQuery.of(context).size.width*0.28,height: MediaQuery.of(context).size.width*0.15,fit: BoxFit.fill,),
+                                title: Text(
+                                  tikTokDataList[index]["description"] == "" ? "Tik tok video" : tikTokDataList[index]["description"] ,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  tikTokDataList[index]["author"]["nickname"],
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DownloadTikTokVideos(tikTokDataList[index]["description"],tikTokDataList[index]["author"]["nickname"],tikTokDataList[index]["video"]["playAddr"],context)),
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+
+
+                        }
+                    )
+                    :
+                    Text(tikTokApiError),
+
+              ),
+              ),
+
+
+
+                  //For Tik Tok videos End
+
+
+
+
+                  //For youtube videos
                   Scaffold(
                     appBar: AppBar(
                       leading: Container(),
@@ -456,6 +618,8 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
                   //   DragBox(Offset(200.0, 0.0), 'Box Two', Colors.orange),
                   //   DragBox(Offset(300.0, 0.0), 'Box Three', Colors.lightGreen),
                   // ]),
+
+                  //For download videos
                   Scaffold(
                     appBar: AppBar(
                       automaticallyImplyLeading: false,

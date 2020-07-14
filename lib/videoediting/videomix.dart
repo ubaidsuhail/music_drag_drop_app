@@ -241,7 +241,7 @@ class _VideoMixState extends State<VideoMix> {
 
     //Now Mixed the video
 
-    _flutterFFmpeg.execute("-f concat -safe 0 -i ${tempFile.path} ${mixedVideoOuputPath}").then((rc){
+    _flutterFFmpeg.execute("-f concat -safe 0 -i ${tempFile.path}  ${mixedVideoOuputPath}").then((rc){
 
       print("Videos mixed");
 
@@ -258,6 +258,7 @@ class _VideoMixState extends State<VideoMix> {
 
        else
          {
+           File(mixedVideoOuputPath).deleteSync();
            Navigator.of(context, rootNavigator: true).pop();
            Fluttertoast.showToast(
                msg: "Error in Mixing Videos",

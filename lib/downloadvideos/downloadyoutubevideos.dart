@@ -31,8 +31,9 @@ class DownloadYoutubeVideos extends StatelessWidget {
       initialVideoId: api.id,
     );
 
-    pr = ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr = ProgressDialog(context,type: ProgressDialogType.Normal,isDismissible: false);
     pr.style(
+
       message: 'Downloading file...',
       borderRadius: 10.0,
       backgroundColor: Colors.white,
