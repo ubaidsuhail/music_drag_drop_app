@@ -27,7 +27,7 @@ class DownloadTikTokVideos extends StatelessWidget {
 
     _controller = VideoPlayerController.network(tikTokVideoUrl);
 
-    pr = ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr = ProgressDialog(context,type: ProgressDialogType.Normal,isDismissible: false);
     pr.style(
       message: 'Downloading file...',
       borderRadius: 10.0,

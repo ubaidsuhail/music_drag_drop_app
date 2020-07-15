@@ -41,7 +41,7 @@ class _DownloadGalleryVideosState extends State<DownloadGalleryVideos> {
     // TODO: implement initState
     super.initState();
     _controller = VideoPlayerController.file(File(widget.galleryVideoPath));
-    pr = ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr = ProgressDialog(context,type: ProgressDialogType.Normal,isDismissible: false);
     pr.style(
         message: 'Downloading file...',
         borderRadius: 10.0,

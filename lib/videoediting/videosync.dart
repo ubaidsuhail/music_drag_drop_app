@@ -13,8 +13,9 @@ import 'package:music_application/Screens/home.dart';
 class VideoSync extends StatefulWidget {
 
   String videopath,audiopath;
+  int videoindex;
 
-   VideoSync({this.videopath,this.audiopath});
+   VideoSync({this.videopath,this.audiopath,this.videoindex});
 
 
   @override
@@ -35,7 +36,7 @@ class _VideoSyncState extends State<VideoSync> {
     // TODO: implement initState
     super.initState();
     _controller = VideoPlayerController.file(File(widget.videopath));
-    pr = ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr = ProgressDialog(context,type: ProgressDialogType.Normal,isDismissible: false);
     pr.style(
       message: 'Sync file...',
       borderRadius: 10.0,
@@ -186,6 +187,9 @@ class _VideoSyncState extends State<VideoSync> {
 
       if(rc == 0)
       {
+        //This will remove video from list
+       StaticData.dragDropVideoList.removeAt(widget.videoindex);
+
         Navigator.of(context, rootNavigator: true).pop();
         Fluttertoast.showToast(
             msg: "Sync Complete",
@@ -198,8 +202,13 @@ class _VideoSyncState extends State<VideoSync> {
         );
 
         Navigator.pop(context);
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => VideoSync(videopath:saveVideosOuputPath,audiopath:StaticData.audioFilePath)));
+//        Navigator.push(context, MaterialPageRoute(
+//            builder: (context) => VideoSync(videopath:saveVideosOuputPath,audiopath:StaticData.audioFilePath)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Home()));
+
       }
       else
       {

@@ -33,7 +33,7 @@ class _VideoMixState extends State<VideoMix> {
     super.initState();
 
     MixTempDir();
-    pr = ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr = ProgressDialog(context,type: ProgressDialogType.Normal,isDismissible: false);
     pr.style(
       message: 'Mixing Video...',
       borderRadius: 10.0,
@@ -241,7 +241,7 @@ class _VideoMixState extends State<VideoMix> {
 
     //Now Mixed the video
 
-    _flutterFFmpeg.execute("-f concat -safe 0 -i ${tempFile.path}  ${mixedVideoOuputPath}").then((rc){
+    _flutterFFmpeg.execute("-f concat -safe 0 -i ${tempFile.path} -c copy ${mixedVideoOuputPath}").then((rc){
 
       print("Videos mixed");
 

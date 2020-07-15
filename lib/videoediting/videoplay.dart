@@ -54,7 +54,7 @@ class _VideoPlayState extends State<VideoPlay> {
     super.initState();
     _controller = VideoPlayerController.file(File(widget.videopath));
 
-    pr = ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr = ProgressDialog(context,type: ProgressDialogType.Normal,isDismissible: false);
     pr.style(
       message: 'Filter Apply...',
       borderRadius: 10.0,
@@ -315,7 +315,7 @@ class _VideoPlayState extends State<VideoPlay> {
         print("Downloaded files list ${directorySavedFilesList} and length is: ${directorySavedFilesList.length}");
 
 
-        videoOuputPath = dir.path+"/savefinalvideos/"+"FIV"+"${directorySavedFilesList.length + 1}_"+pt.basename(widget.videopath);
+        videoOuputPath = dir.path+"/savefinalvideos/"+"FIV"+"${directorySavedFilesList.length}_"+pt.basename(widget.videopath);
 
 
 

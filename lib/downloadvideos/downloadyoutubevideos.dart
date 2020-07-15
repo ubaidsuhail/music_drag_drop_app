@@ -19,7 +19,6 @@ class DownloadYoutubeVideos extends StatelessWidget {
   var videoWithoutAudio;
   Stream<List<int>> bytes;
   String downloadFilePath = "";
-  File writeFile;
   int sum=0;
   ProgressDialog pr;
   String videoTitle = "";
@@ -98,7 +97,7 @@ class DownloadYoutubeVideos extends StatelessWidget {
                   ),
                   SizedBox(width: 10.0),
                   Text(
-                    _yi_api.channelTitle,
+                    _yi_api.channelTitle+"${_yi_api.id}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15.0,
@@ -202,17 +201,20 @@ class DownloadYoutubeVideos extends StatelessWidget {
     //Path where to download file
     downloadFilePath=dir.path+"/musicappdj"+"/Vi${directoryDownloadedFilesList.length + 1}" + videoTitle + ".mp4";
 
+    //Now write bytes in file
+    File writeFile = File(downloadFilePath);
+    var writeFileStream = writeFile.openWrite();
 
-   // Assign path to write file object in which file is written
-    writeFile = File(downloadFilePath);
+    // Pipe all the content of the stream into the file.
+    var task = await bytes.pipe(writeFileStream);
 
-    bytes.asBroadcastStream().listen((List<int> event) {
-      writeFile.writeAsBytesSync(event,mode:FileMode.append);
-      sum=sum+event.length;
-      print("sum is: "+sum.toString());
-    },
-        onDone : (){
-          print("Downloading Complete");
+    print("Task done ${task}");
+
+    // Close the file.
+    await writeFileStream.flush();
+    await writeFileStream.close();
+
+    print("Downloading Complete");
           Navigator.of(context, rootNavigator: true).pop();
           Fluttertoast.showToast(
               msg: "Downloading Complete",
@@ -223,9 +225,34 @@ class DownloadYoutubeVideos extends StatelessWidget {
               textColor: Colors.white,
               fontSize: 16.0
           );
-          //Navigator.pop(context);
-        }
-    );
+
+
+
+
+    //Old method
+   // Assign path to write file object in which file is written
+//    writeFile = File(downloadFilePath);
+//
+//    bytes.asBroadcastStream().listen((List<int> event) {
+//      writeFile.writeAsBytesSync(event,mode:FileMode.append);
+//      sum=sum+event.length;
+//      print("sum is: "+sum.toString());
+//    },
+//        onDone : (){
+//          print("Downloading Complete");
+//          Navigator.of(context, rootNavigator: true).pop();
+//          Fluttertoast.showToast(
+//              msg: "Downloading Complete",
+//              toastLength: Toast.LENGTH_SHORT,
+//              gravity: ToastGravity.BOTTOM,
+//              timeInSecForIosWeb: 1,
+//              backgroundColor: Colors.blue[300],
+//              textColor: Colors.white,
+//              fontSize: 16.0
+//          );
+//          //Navigator.pop(context);
+//        }
+//    );
 
   }
 

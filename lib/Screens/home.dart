@@ -384,7 +384,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-
+//This will show you alert box
   void VideoAlert(String videoPath,int index,List videoImage)
   {
     showDialog(
@@ -451,7 +451,7 @@ class _HomeState extends State<Home> {
                             child:GestureDetector(
                                 onTap: (){
                                   Navigator.pop(context);
-                                  SyncVideo(videoPath);
+                                  SyncVideo(videoPath,index);
                                 },
                                 child:SingleChildScrollView(
                                     child:Column(
@@ -490,6 +490,29 @@ class _HomeState extends State<Home> {
                             )
                         ),
 
+
+                        //For Remove Video
+                        Container(
+                            padding: EdgeInsets.only(top:2.0),
+                            margin: EdgeInsets.only(left: 25.0),
+                            child:GestureDetector(
+                                onTap: (){
+                                  Navigator.pop(context);
+                                  //SyncVideo(videoPath);
+                                  RemoveVideo(index);
+                                },
+                                child:SingleChildScrollView(
+                                    child:Column(
+                                      children: <Widget>[
+                                        Icon(Icons.delete,size: 30.0,),
+                                        Text("Remove",style: TextStyle(fontSize: 12.0,decoration: TextDecoration.none,color: Colors.black),),
+
+
+                                      ],
+                                    )
+                                )
+                            )
+                        ),
 
 
 
@@ -530,7 +553,6 @@ class _HomeState extends State<Home> {
 
 
   //This method will get audio with the help of file picker
-
   void GetAudio() async
   {
     try {
@@ -589,8 +611,7 @@ class _HomeState extends State<Home> {
 
 
   //This will goes to Sync Audio Video File
-
-  void SyncVideo(String videoPath)
+  void SyncVideo(String videoPath,int videoIndex)
   {
     if(StaticData.audioFilePath == "")
       {
@@ -620,10 +641,11 @@ class _HomeState extends State<Home> {
         {
           Navigator.pop(context);
           Navigator.push(context, MaterialPageRoute(
-              builder: (context) => VideoSync(videopath:videoPath,audiopath:StaticData.audioFilePath)));
+              builder: (context) => VideoSync(videopath:videoPath,audiopath:StaticData.audioFilePath,videoindex:videoIndex)));
         }
   }
 
+  //This will mix the video
 
    void MixVideo(String videoPath , List videoImage)
    {
@@ -683,6 +705,18 @@ class _HomeState extends State<Home> {
 
 
    }
+
+
+ //This will remove the video from list
+void RemoveVideo(int videoIndex)
+{
+  StaticData.dragDropVideoList.removeAt(videoIndex);
+
+  setState(() {
+    StaticData.dragDropVideoList;
+  });
+
+}
 
 
 }
