@@ -19,12 +19,13 @@ import 'package:flutter/services.dart';
 import 'package:music_application/videoediting/videosync.dart';
 import 'package:music_application/Screens/savevideos.dart';
 import 'package:music_application/videoediting/videomix.dart';
-
+import 'package:music_application/sharedpreference/sharedpreferenceapp.dart';
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
+
 
 class _HomeState extends State<Home> {
   // Color caughtColor = Colors.grey;
@@ -32,6 +33,31 @@ class _HomeState extends State<Home> {
   final GoogleSignIn _googleSignIn = new GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool duplicateMixVideo = true;
+  SharedPreferenceApp shPrefApp = SharedPreferenceApp();
+  int videoTotal = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    GetVideoNumber();
+  }
+
+  void GetVideoNumber() async{
+
+    videoTotal = await shPrefApp.GetSyncVideo();
+    if(videoTotal == null)
+      {
+        videoTotal = 0;
+      }
+
+    setState(() {
+      videoTotal;
+    });
+
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +83,28 @@ class _HomeState extends State<Home> {
           ),
           Spacer(),
           InkWell(
-            child: Icon(Icons.music_video,size: 50,),
+            child: Icon(Icons.music_video,size: 50),
             onTap: () {
+              shPrefApp.SetSyncVideo(0);
+              Navigator.pop(context);
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => SaveVideos()));
             },
-          )
+          ),
+          videoTotal == null || videoTotal == 0 ?
+              Text("")
+          :
+          Container(
+            padding: EdgeInsets.only(top: 2.0),
+            height: 25.0,
+            width: 25.0,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                    100.0),
+                color: Colors.red
+            ),
+            child: Text("${videoTotal}",textAlign: TextAlign.center,style: TextStyle(fontSize: 14.0),),
+          ),
         ]),
       ),
       body: Stack(
@@ -131,7 +173,7 @@ class _HomeState extends State<Home> {
                     children: <Widget>[
 
                       AutoSizeText(
-                        "Drop Audio Here",
+                        "Tap Image For Audio",
                         style: GoogleFonts.roboto(
                           fontSize: 30,
                           fontWeight: FontWeight.w500,
@@ -361,6 +403,12 @@ class _HomeState extends State<Home> {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => Login()));
       });
+
+      StaticData.dragDropVideoList = [];
+      StaticData.audioFilePath = "";
+      StaticData.mixVideoList = [];
+
+
     } catch (e) {
       print("error logging out");
       Alert(

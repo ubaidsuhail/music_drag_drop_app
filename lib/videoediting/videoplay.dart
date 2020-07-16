@@ -11,6 +11,7 @@ import 'package:path/path.dart' as pt;
 import 'dart:io';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:music_application/sharedpreference/sharedpreferenceapp.dart';
 
 
 
@@ -42,11 +43,14 @@ class _VideoPlayState extends State<VideoPlay> {
 
   String applyVideoColorCommand;
   String videoOuputPath = "";
+  String tempInputPath = "";
 
   Directory dir;
   List directorySavedFilesList = [];
 
   ProgressDialog pr;
+
+  SharedPreferenceApp shPrefApp = SharedPreferenceApp();
 
   @override
   void initState() {
@@ -269,7 +273,7 @@ class _VideoPlayState extends State<VideoPlay> {
 //        box.size);
 
     //It share videos
-   ShareExtend.share(widget.videopath, "Music App");
+   ShareExtend.share(widget.videopath, "video");
   }
 
 
@@ -296,9 +300,23 @@ class _VideoPlayState extends State<VideoPlay> {
         int width = videoPathInfo["streams"][0]["width"];
         print("width is:${width}");
 
+
+        if(width == null)
+          {
+            width = 1000;
+          }
+
+
         //Height of video
         int height = videoPathInfo["streams"][0]["height"];
         print("height is:${height}");
+
+
+        if(height == null)
+          {
+            height = 720;
+          }
+
 
 
         //Now convert int Color to color Object
@@ -315,13 +333,30 @@ class _VideoPlayState extends State<VideoPlay> {
         print("Downloaded files list ${directorySavedFilesList} and length is: ${directorySavedFilesList.length}");
 
 
+        //This is the temporary path which set equal resolution
+        tempInputPath = dir.path+"/tempFilterFile.mp4";
+
+        //This is the final filter output path
         videoOuputPath = dir.path+"/savefinalvideos/"+"FIV"+"${directorySavedFilesList.length}_"+pt.basename(widget.videopath);
 
 
 
+        //This will convert video in same resolution
+       int filterBool = await _flutterFFmpeg.execute("-i ${widget.videopath} -vf 'scale=$width:$height' -y ${tempInputPath}");
+
+
+       print("Filter resolution Completed:${filterBool}");
+
+
+       if(filterBool == 0)
+         {
+
+           //This will remove path if user destroy app before filter
+           await shPrefApp.SetFilterEmptyVideo(videoOuputPath);
+
 
         //Now Add Color Filter
-        _flutterFFmpeg.execute("-i ${widget.videopath} -f lavfi -i 'color=$applyVideoColorCommand:s=${width}x${height}' -filter_complex 'blend=shortest=1:all_mode=overlay' ${videoOuputPath}").then((rc)
+        _flutterFFmpeg.execute("-i ${tempInputPath} -f lavfi -i 'color=$applyVideoColorCommand:s=${width}x${height}' -filter_complex 'blend=shortest=1:all_mode=overlay' ${videoOuputPath}").then((rc)
         {
           print("FFmpeg process exited with rc $rc");
 
@@ -331,6 +366,12 @@ class _VideoPlayState extends State<VideoPlay> {
 
               //Delete the current input file
               File(widget.videopath).deleteSync();
+
+              //Delete the tempfile file
+              File(tempInputPath).deleteSync();
+
+              //This will set filter video 1 because filter is completed successfully
+              shPrefApp.SetFilterEmptyVideo("1");
 
               //Close Dialog Box
               Navigator.of(context, rootNavigator: true).pop();
@@ -355,7 +396,7 @@ class _VideoPlayState extends State<VideoPlay> {
             //If now heightxwidth
           else if(rc ==1)
             {
-              _flutterFFmpeg.execute("-i ${widget.videopath} -f lavfi -i 'color=$applyVideoColorCommand:s=${height}x${width}' -filter_complex 'blend=shortest=1:all_mode=overlay' ${videoOuputPath}").then((rc)
+              _flutterFFmpeg.execute("-i ${tempInputPath} -f lavfi -i 'color=$applyVideoColorCommand:s=${height}x${width}' -filter_complex 'blend=shortest=1:all_mode=overlay' ${videoOuputPath}").then((rc)
               {
                 print("FFmpeg process exited with rc in second command $rc");
 
@@ -365,6 +406,14 @@ class _VideoPlayState extends State<VideoPlay> {
 
                   //Delete the current input file
                   File(widget.videopath).deleteSync();
+
+                  //Delete the tempfile file
+                  File(tempInputPath).deleteSync();
+
+
+                  //This will set filter video 1 because filter is completed successfully
+                  shPrefApp.SetFilterEmptyVideo("1");
+
 
                   //Close Dialog Box
                   Navigator.of(context, rootNavigator: true).pop();
@@ -390,6 +439,13 @@ class _VideoPlayState extends State<VideoPlay> {
                   {
                     //Delete the current input file
                     File(videoOuputPath).deleteSync();
+
+                    //Delete the tempfile file
+                    File(tempInputPath).deleteSync();
+
+                    //This will set filter video 1 because filter is completed successfully
+                    shPrefApp.SetFilterEmptyVideo("1");
+
                     //Close Dialog Box
                     Navigator.of(context, rootNavigator: true).pop();
 
@@ -409,15 +465,30 @@ class _VideoPlayState extends State<VideoPlay> {
               );
             }
 
-
-
-
+        }
+        );
 
 
 
         }
-        );
 
+        //Agar same resolution apply nhi hoa to error aiga
+        else
+          {
+            //Close Dialog Box
+            Navigator.of(context, rootNavigator: true).pop();
+            Fluttertoast.showToast(
+                msg: "Error:Filter can not be applied on this video because of resolution issue",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.blue[300],
+                textColor: Colors.white,
+                fontSize: 16.0
+            );
+
+            File(tempInputPath).deleteSync();
+          }
 
 
 

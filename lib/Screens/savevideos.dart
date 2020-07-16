@@ -3,6 +3,8 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:flutter_video_compress/flutter_video_compress.dart';
 import 'package:music_application/videoediting/videoplay.dart';
+import 'package:music_application/sharedpreference/sharedpreferenceapp.dart';
+import 'package:music_application/Screens/home.dart';
 
 class SaveVideos extends StatefulWidget {
   @override
@@ -15,12 +17,24 @@ class _SaveVideosState extends State<SaveVideos> {
   List saveVideosThumbnail = List();
   var thumbnail;
   final _flutterVideoCompress = FlutterVideoCompress();
+  SharedPreferenceApp shPrefApp = SharedPreferenceApp();
 
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      child:Scaffold(
     appBar: AppBar(
+      automaticallyImplyLeading: false,
+      leading: GestureDetector(
+        onTap: ()
+        {
+          Navigator.pop(context);
+          Navigator.push(context, MaterialPageRoute(
+              builder: (context) => Home()));
+        },
+        child: Icon(Icons.arrow_back),
+      ),
       title: Text("Save Videos"),
     ),
       body: FutureBuilder(
@@ -73,12 +87,29 @@ class _SaveVideosState extends State<SaveVideos> {
           }
         }),
 
-        );
+        ),
+      onWillPop: (){
+        Navigator.pop(context);
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => Home()));
+      },);
   }
 
 
   Future FinalSaveVideos() async
     {
+
+      //This will check whether video right or not
+      String emptyVideo = await shPrefApp.GetFilterEmptyVideo();
+
+      if(!(emptyVideo == null || emptyVideo == "1"))
+      {
+        File(emptyVideo).deleteSync();
+        await shPrefApp.SetFilterEmptyVideo("1");
+      }
+
+      print("Empty video is:${emptyVideo}");
+
       //This will get the directory
       dir=await getExternalStorageDirectory();
       saveVideosList = [];

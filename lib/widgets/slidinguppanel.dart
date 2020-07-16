@@ -21,7 +21,7 @@ import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:nice_button/nice_button.dart';
 import 'dart:convert';
 import 'package:music_application/downloadvideos/downloadtiktokvideos.dart';
-
+import 'package:music_application/sharedpreference/sharedpreferenceapp.dart';
 
 
 class SlidingUpPanelTabs extends StatefulWidget {
@@ -53,7 +53,7 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
   int currentPos;
   String stateText;
   //String apikey = 'AIzaSyDVklre5qoxkR7TVa11mp4Gr0B6yz1M8h4';
-  String apikey = 'AIzaSyByk6OwDukiENI7QR6VKRuzi4ZDtKLRWdg';
+  String apikey = 'AIzaSyBgv2c0Rt4Ifb3aBcVrROi35nK0qqLVpXw';
   TextEditingController search;
   TextEditingController searchTikTok;
   YoutubePlayerController videoController;
@@ -70,11 +70,12 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
   List<Uint8List> downloadedFileImage = [];
   var dir;
   String tikTokUrl = "";
-  Map<String,String> tikTokApiKeyParameter = {"X-RapidAPI-Host":"tiktok.p.rapidapi.com","X-RapidAPI-Key":"787214f48cmshe9863c5e8296b29p13634bjsn291c26473af0"};
+  Map<String,String> tikTokApiKeyParameter = {"X-RapidAPI-Host":"tiktok.p.rapidapi.com","X-RapidAPI-Key":"d1de1eee2amsh766b14dacd457bbp108a3djsn0b7b60d26751"};
   Response tikTokApiResponse;
   Map<String,dynamic> tikTokKeyValues;
   List tikTokDataList = [];
   String tikTokApiError = "";
+  SharedPreferenceApp shPrefApp = SharedPreferenceApp();
 
 
 
@@ -233,6 +234,18 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
 
   void GetDownloadedFiles() async
   {
+    //This will check whether video right or not
+    String emptyVideo = await shPrefApp.GetYoutubeEmptyVideo();
+
+    if(!(emptyVideo == null || emptyVideo == "1"))
+      {
+       File(emptyVideo).deleteSync();
+       await shPrefApp.SetYoutubeEmptyVideo("1");
+      }
+
+
+    print("Empty video is:${emptyVideo}");
+
     //This will get the directory
     dir=await getExternalStorageDirectory();
 
@@ -395,6 +408,7 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
               indicatorColor: theme.primaryColor,
               controller: _controller,
               labelColor: theme.primaryColor,
+              isScrollable: true,
               tabs: [
                 new Tab(
                   text: 'Gallery',

@@ -9,6 +9,7 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:music_application/staticclasses/staticdata.dart';
 import 'package:music_application/Screens/home.dart';
+import 'package:music_application/sharedpreference/sharedpreferenceapp.dart';
 
 class VideoSync extends StatefulWidget {
 
@@ -30,6 +31,10 @@ class _VideoSyncState extends State<VideoSync> {
   String saveVideosOuputPath = "";
   final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
   ProgressDialog pr;
+
+  SharedPreferenceApp shPrefApp = SharedPreferenceApp();
+
+  int videoNumber;
 
   @override
   void initState() {
@@ -160,6 +165,17 @@ class _VideoSyncState extends State<VideoSync> {
   void SyncAudioAndVideo() async
   {
 
+    //This will show how much video not shown by user
+    videoNumber = await shPrefApp.GetSyncVideo();
+
+    print("Video Number is:${videoNumber}");
+
+    if(videoNumber == null)
+      {
+        videoNumber = 0 ;
+      }
+
+
     //This will pause the video
     _controller.pause();
 
@@ -189,6 +205,11 @@ class _VideoSyncState extends State<VideoSync> {
       {
         //This will remove video from list
        StaticData.dragDropVideoList.removeAt(widget.videoindex);
+
+       //Now increase the video number length
+       shPrefApp.SetSyncVideo(videoNumber + 1);
+
+
 
         Navigator.of(context, rootNavigator: true).pop();
         Fluttertoast.showToast(

@@ -8,6 +8,7 @@ import 'package:nice_button/nice_button.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:music_application/Screens/home.dart';
+import 'package:music_application/sharedpreference/sharedpreferenceapp.dart';
 
 class DownloadYoutubeVideos extends StatelessWidget {
   String videoId;
@@ -22,6 +23,7 @@ class DownloadYoutubeVideos extends StatelessWidget {
   int sum=0;
   ProgressDialog pr;
   String videoTitle = "";
+  SharedPreferenceApp shPrefApp = SharedPreferenceApp();
 
   DownloadYoutubeVideos(YT_API api, BuildContext context) {
     //onTap(api, context);
@@ -97,7 +99,7 @@ class DownloadYoutubeVideos extends StatelessWidget {
                   ),
                   SizedBox(width: 10.0),
                   Text(
-                    _yi_api.channelTitle+"${_yi_api.id}",
+                    _yi_api.channelTitle,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15.0,
@@ -197,9 +199,16 @@ class DownloadYoutubeVideos extends StatelessWidget {
 
     //This will get the title of youtube video and replace empty space with -
     videoTitle = _yi_api.title.replaceAll(" ", "_");
+    videoTitle = videoTitle.replaceAll("/", "_");
+    videoTitle = videoTitle.replaceAll(".", "_");
 
     //Path where to download file
     downloadFilePath=dir.path+"/musicappdj"+"/Vi${directoryDownloadedFilesList.length + 1}" + videoTitle + ".mp4";
+
+
+    //Now set file in shared preference if before download user will close the app
+    await shPrefApp.SetYoutubeEmptyVideo(downloadFilePath);
+
 
     //Now write bytes in file
     File writeFile = File(downloadFilePath);
@@ -213,6 +222,10 @@ class DownloadYoutubeVideos extends StatelessWidget {
     // Close the file.
     await writeFileStream.flush();
     await writeFileStream.close();
+
+    //Now set file in shared preference if before download user will close the app
+   await shPrefApp.SetYoutubeEmptyVideo("1");
+
 
     print("Downloading Complete");
           Navigator.of(context, rootNavigator: true).pop();
