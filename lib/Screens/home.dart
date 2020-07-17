@@ -407,6 +407,7 @@ class _HomeState extends State<Home> {
       StaticData.dragDropVideoList = [];
       StaticData.audioFilePath = "";
       StaticData.mixVideoList = [];
+      shPrefApp.SetUserName("1");
 
 
     } catch (e) {

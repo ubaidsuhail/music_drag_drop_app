@@ -13,6 +13,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:music_application/sharedpreference/sharedpreferenceapp.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -23,11 +24,12 @@ class _LoginState extends State<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final _formKeyForgot = GlobalKey<FormState>();
   bool _isLoading = false;
-
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool passwordVisibleLogin = false;
+  SharedPreferenceApp shPrefApp = SharedPreferenceApp();
+  TextEditingController _forgotPassword = TextEditingController();
 
   Function onPressedLogin() {
     setState(() {
@@ -83,16 +85,11 @@ class _LoginState extends State<Login> {
                                 padding: EdgeInsets.only(
                                   left: AppPadding.formFieldPadding[0],
                                   right: AppPadding.formFieldPadding[0],
-                                  top: 40,
+                                  top: 35,
                                 ),
                                 child: MusicTextFormField(
                                   controller: emailController,
                                   hintText: 'Enter Your Email',
-                                  validatorFunction: (String text) {
-                                    if (text.isEmpty) {
-                                      return 'Input phone number';
-                                    }
-                                  },
                                   isPassField: false,
                                 ),
                               ),
@@ -104,11 +101,6 @@ class _LoginState extends State<Login> {
                                 child: MusicTextFormField(
                                   controller: passController,
                                   hintText: 'Enter Your Password',
-                                  validatorFunction: (String text) {
-                                    if (text.isEmpty) {
-                                      return 'Input password';
-                                    }
-                                  },
                                   isPassField: true,
                                   isPasswordVisible: passwordVisibleLogin,
                                 ),
@@ -130,59 +122,47 @@ class _LoginState extends State<Login> {
                                   ),
                                   color: Colors.white,
                                   onPressed: () async {
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) => Home()));
 
-                                    signInWithEmail(emailController.text.trim(),
-                                        passController.text);
+                                    if(emailController.text.isEmpty || passController.text.isEmpty)
+                                      {
+                                        print("email and password can not be empty");
+                                        Alert(
+                                          context: context,
+                                          type: AlertType.error,
+                                          title: "Error",
+                                          desc: "Email or Password can not be Empty",
+                                          buttons: [
+                                            DialogButton(
+                                              child: Text("DISMISS",
+                                                  style: Theme.of(context).textTheme.title.copyWith(
+                                                    color: Colors.white,
+                                                  )),
+                                              color: theme.accentColor,
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            )
+                                          ],
+                                        ).show();
+                                      }
+                                    else
+                                      {
+                                        await signInWithEmail(
+                                            emailController.text.trim(),
+                                            passController.text);
+                                      }
 
-                                    if (emailController.text.isEmpty ||
-                                        passController.text.isEmpty) {
-                                      print(
-                                          'Email and password cannot be empty');
-                                      return;
-                                    }
-                                    bool res = await signInWithEmail(
-                                        emailController.text.trim(),
-                                        passController.text);
-                                    if (!res) {
-                                      print('Login failed');
-                                      Alert(
-                                        context: context,
-                                        type: AlertType.error,
-                                        title: "Error",
-                                        desc: "Login Failed",
-                                        buttons: [
-                                          DialogButton(
-                                            child: Text("DISMISS",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .title
-                                                    .copyWith(
-                                                      color: Colors.white,
-                                                    )),
-                                            color: theme.accentColor,
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          )
-                                        ],
-                                      ).show();
-                                    } else {
 
-                                      TakePermission();
 
-//                                      Navigator.push(
-//                                          context,
-//                                          MaterialPageRoute(
-//                                              builder: (context) => Home()));
-                                    }
+
                                   },
                                 ),
                               ),
                               GestureDetector(
+                                onTap: ()
+                                {
+                                  ForgotPasswordDialog();
+                                },
                                 child: Text(
                                   'Forgot Password?',
                                   style: GoogleFonts.roboto(
@@ -260,41 +240,41 @@ class _LoginState extends State<Login> {
                                     ),
                                   ),
                                   onPressed: () async {
-                                    bool res = await loginWithGoogle();
-                                    if (!res) {
-                                      print("Error logging in with google");
-                                      Alert(
-                                        context: context,
-                                        type: AlertType.error,
-                                        title: "Error",
-                                        desc: "Login Failed",
-                                        buttons: [
-                                          DialogButton(
-                                            child: Text("DISMISS",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .title
-                                                    .copyWith(
-                                                      color: Colors.white,
-                                                    )),
-                                            color: theme.accentColor,
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          )
-                                        ],
-                                      ).show();
-                                    } else {
-
-                                      //TakePermission
+                                    await loginWithGoogle();
+//                                    if (!res) {
+//                                      print("Error logging in with google");
+//                                      Alert(
+//                                        context: context,
+//                                        type: AlertType.error,
+//                                        title: "Error",
+//                                        desc: "Login Failed",
+//                                        buttons: [
+//                                          DialogButton(
+//                                            child: Text("DISMISS",
+//                                                style: Theme.of(context)
+//                                                    .textTheme
+//                                                    .title
+//                                                    .copyWith(
+//                                                      color: Colors.white,
+//                                                    )),
+//                                            color: theme.accentColor,
+//                                            onPressed: () {
+//                                              Navigator.of(context).pop();
+//                                            },
+//                                          )
+//                                        ],
+//                                      ).show();
+//                                    } else {
 //
-                                      TakePermission();
-
-//                                      Navigator.push(
-//                                          context,
-//                                          MaterialPageRoute(
-//                                              builder: (context) => Home()));
-                                    }
+//                                      //TakePermission
+////
+//                                      TakePermission();
+//
+////                                      Navigator.push(
+////                                          context,
+////                                          MaterialPageRoute(
+////                                              builder: (context) => Home()));
+//                                    }
                                   },
                                 )),
                             Row(
@@ -340,11 +320,32 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Future<bool> loginWithGoogle() async {
+  Future loginWithGoogle() async {
     try {
       GoogleSignIn googleSignIn = GoogleSignIn();
       GoogleSignInAccount account = await googleSignIn.signIn();
-      if (account == null) return false;
+      if (account == null)
+        {
+          Alert(
+            context: context,
+            type: AlertType.error,
+            title: "Error",
+            desc: "Error in Login with Gmail",
+            buttons: [
+              DialogButton(
+                child: Text("DISMISS",
+                    style: Theme.of(context).textTheme.title.copyWith(
+                      color: Colors.white,
+                    )),
+                color: theme.accentColor,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ).show();
+          return;
+        }
       setState(() => _isLoading = true);
       AuthResult res =
           await _auth.signInWithCredential(GoogleAuthProvider.getCredential(
@@ -354,8 +355,15 @@ class _LoginState extends State<Login> {
       setState(() {
         _isLoading = false;
       });
-      if (res.user == null) return false;
-      return true;
+      if (res.user != null)
+      {
+        print("Gmail response of user is${res.user.email}");
+
+        //Now set username in shared pref data
+        shPrefApp.SetUserName(res.user.email);
+
+        TakePermission();
+      }
     } catch (e) {
       print(e.message);
       print("Error logging with google");
@@ -384,23 +392,33 @@ class _LoginState extends State<Login> {
     }
   }
 
-  Future<bool> signInWithEmail(String email, String password) async {
+  Future signInWithEmail(String email, String password) async {
     try {
       setState(() {
         _isLoading = true;
       });
       AuthResult result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-
+      //print("result is:${result}");
       setState(() {
         _isLoading = false;
       });
       FirebaseUser user = result.user;
+      print("user is:${user.email}");
 
+
+
+      //It means user is correct
       if (user != null)
-        return true;
-      else
-        return false;
+      {
+        //Now set username in shared pref data
+        shPrefApp.SetUserName(user.email);
+
+        TakePermission();
+//        return true;
+      }
+
+       // return false;
     } catch (e) {
       print(e.message);
       Alert(
@@ -557,6 +575,8 @@ class _LoginState extends State<Login> {
       print("Newly create downloaded directory is:"+createDirectory.path);
     }
 
+    //This will remove login page from stack
+    Navigator.pop(context);
     //This will sent to home page
     Navigator.push(
         context,
@@ -565,6 +585,88 @@ class _LoginState extends State<Login> {
 
   }
 
+
+  void ForgotPasswordDialog() async
+  {
+    print("Forgot password");
+    showDialog(
+        context: context,
+        builder: (context) {
+      return AlertDialog(
+          backgroundColor: theme.primaryColor,
+          shape: RoundedRectangleBorder(
+              borderRadius:
+              BorderRadius.all(Radius.circular(10.0))),
+          title: Text("",
+            style: TextStyle(
+                color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child:Form(
+                    key:_formKeyForgot,
+                  child:TextFormField(
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return "Please enter your email";
+                      }
+                      return null;
+                    },
+                    keyboardType: TextInputType.emailAddress,
+                    controller: _forgotPassword,
+                    decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 10.0),
+                        fillColor: Colors.white,
+                        filled: true,
+                        hintText: "Enter email address",
+                        border: OutlineInputBorder(
+                            borderRadius:
+                            BorderRadius.circular(5.0))),
+                  ))),
+              Container(
+                  width: MediaQuery.of(context).size.width*0.6,
+                  padding: EdgeInsets.only(top: 30.0),
+                  child: RaisedButton(
+                    child: Text(
+                      "Send",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20.0),
+                    ),
+
+                    color: Colors.redAccent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(10),
+                            topLeft: Radius.circular(10))),
+                    onPressed: () {
+                      if(_formKeyForgot.currentState.validate())
+                        {
+                          Navigator.pop(context);
+                          ForgotPassword();
+                        }
+                        else
+                          {
+                            print("please enter email");
+                          }
+
+                    },
+                  ))
+            ],
+          ));
+
+  });
+  }
+
+  void ForgotPassword() async
+  {
+    await _auth.sendPasswordResetEmail(email: _forgotPassword.text);
+  }
 
 
 

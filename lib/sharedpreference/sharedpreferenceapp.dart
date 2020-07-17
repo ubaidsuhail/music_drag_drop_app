@@ -4,6 +4,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SharedPreferenceApp
 {
 
+
+  void SetUserName(String username) async
+  {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.setString("username",username);
+
+  }
+
+
+  Future<String> GetUserName() async
+  {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return prefs.getString("username");
+  }
+
+
+
+
   Future SetYoutubeEmptyVideo(String video) async
   {
     final SharedPreferences prefs = await SharedPreferences.getInstance();

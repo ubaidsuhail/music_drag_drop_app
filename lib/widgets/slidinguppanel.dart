@@ -70,7 +70,8 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
   List<Uint8List> downloadedFileImage = [];
   var dir;
   String tikTokUrl = "";
-  Map<String,String> tikTokApiKeyParameter = {"X-RapidAPI-Host":"tiktok.p.rapidapi.com","X-RapidAPI-Key":"d1de1eee2amsh766b14dacd457bbp108a3djsn0b7b60d26751"};
+  //Map<String,String> tikTokApiKeyParameter = {"X-RapidAPI-Host":"tiktok.p.rapidapi.com","X-RapidAPI-Key":"d1de1eee2amsh766b14dacd457bbp108a3djsn0b7b60d26751"};
+  Map<String,String> tikTokApiKeyParameter = {"X-RapidAPI-Host":"tiktok.p.rapidapi.com","X-RapidAPI-Key":"rd1de1eee2amsh766b14dacd457bbp108a3djsn0b7b60d26751"};
   Response tikTokApiResponse;
   Map<String,dynamic> tikTokKeyValues;
   List tikTokDataList = [];
