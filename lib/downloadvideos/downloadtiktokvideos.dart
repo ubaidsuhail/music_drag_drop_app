@@ -161,7 +161,7 @@ class DownloadTikTokVideos extends StatelessWidget {
 
     //By using ffmpeg download video without audio for tiktok or remove audio from video for tiktok
 
-    _flutterFFmpegRemoveAudio.execute("-i ${tikTokVideoUrl} -c copy -an ${downloadFilePath}").then((rc){
+    _flutterFFmpegRemoveAudio.execute("-i ${tikTokVideoUrl} -c copy  ${downloadFilePath}").then((rc){
       print("FFmpeg process exited with rc $rc");
       if(rc == 0)
       {

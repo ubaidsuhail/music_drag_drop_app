@@ -71,7 +71,7 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
   var dir;
   String tikTokUrl = "";
   //Map<String,String> tikTokApiKeyParameter = {"X-RapidAPI-Host":"tiktok.p.rapidapi.com","X-RapidAPI-Key":"d1de1eee2amsh766b14dacd457bbp108a3djsn0b7b60d26751"};
-  Map<String,String> tikTokApiKeyParameter = {"X-RapidAPI-Host":"tiktok.p.rapidapi.com","X-RapidAPI-Key":"rd1de1eee2amsh766b14dacd457bbp108a3djsn0b7b60d26751"};
+  Map<String,String> tikTokApiKeyParameter = {"X-RapidAPI-Host":"tiktok.p.rapidapi.com","X-RapidAPI-Key":"abd5232426msh2985db2cb96aa1cp1b808bjsnfbaa2eb77467"};
   Response tikTokApiResponse;
   Map<String,dynamic> tikTokKeyValues;
   List tikTokDataList = [];
@@ -485,9 +485,24 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
                                 color: Colors.black,
                               ),
                               controller: searchTikTok,
-                              onFieldSubmitted: (String username) async {
-                                TikTokVideos(username);
+                              onFieldSubmitted: (String username) {
+
+                                if(username.length != 0)
+                                  {
+                                    TikTokVideos(username);
+                                  }
+
                               },
+
+                             onChanged: (String usernames){
+                                print("usernames${usernames.length}");
+
+                                if(usernames.length == 0)
+                                  {
+                                    TikTokVideos("");
+                                  }
+                             },
+
                             );
                             setState(() {
                               onSearchTikTok = !onSearchTikTok;
@@ -501,6 +516,7 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
                               onSearchTikTok = true;
                               searchTikTok.clear();
                             });
+                            TikTokVideos("");
                           }
                         });
                       },

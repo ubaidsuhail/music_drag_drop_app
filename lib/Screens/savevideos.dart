@@ -56,7 +56,9 @@ class _SaveVideosState extends State<SaveVideos> {
                   itemBuilder: (BuildContext context , int index){
                     return GestureDetector(
                     onTap: (){
+                      print("Video is:${saveVideosList[index].path}");
                     PlayVideo(saveVideosList[index].path);
+
                     },
                       child:Container(
                       height: MediaQuery.of(context).size.height*0.2 ,
@@ -147,8 +149,6 @@ class _SaveVideosState extends State<SaveVideos> {
      //Pop save video screen
      Navigator.pop(context);
 
-     //Pop home screen
-     Navigator.pop(context);
 
      Navigator.push(context, MaterialPageRoute(
          builder: (context) => VideoPlay(videopath:videoPath,shareoption:1)));

@@ -211,7 +211,7 @@ void DownloadGalleryVideos(BuildContext context) async
 
    //By using ffmpeg download video without audio or remove audio from video
 
-    _flutterFFmpegRemoveAudio.execute("-i ${galleryFilePath.path} -c copy -an ${downloadFilePath}").then((rc){
+    _flutterFFmpegRemoveAudio.execute("-i ${galleryFilePath.path} -c copy  ${downloadFilePath}").then((rc){
         print("FFmpeg process exited with rc $rc");
         if(rc == 0)
           {
