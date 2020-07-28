@@ -53,7 +53,7 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
   int currentPos;
   String stateText;
   //String apikey = 'AIzaSyDVklre5qoxkR7TVa11mp4Gr0B6yz1M8h4';
-  String apikey = 'AIzaSyBgv2c0Rt4Ifb3aBcVrROi35nK0qqLVpXw';
+  String apikey = 'AIzaSyDsLiCAWoe9e6HYEEfRLfqx5zi8rrC9jgk';
   TextEditingController search;
   TextEditingController searchTikTok;
   YoutubePlayerController videoController;
@@ -71,7 +71,7 @@ class _SlidingUpPanelTabsState extends State<SlidingUpPanelTabs>
   var dir;
   String tikTokUrl = "";
   //Map<String,String> tikTokApiKeyParameter = {"X-RapidAPI-Host":"tiktok.p.rapidapi.com","X-RapidAPI-Key":"d1de1eee2amsh766b14dacd457bbp108a3djsn0b7b60d26751"};
-  Map<String,String> tikTokApiKeyParameter = {"X-RapidAPI-Host":"tiktok.p.rapidapi.com","X-RapidAPI-Key":"abd5232426msh2985db2cb96aa1cp1b808bjsnfbaa2eb77467"};
+  Map<String,String> tikTokApiKeyParameter = {"X-RapidAPI-Host":"tiktok.p.rapidapi.com","X-RapidAPI-Key":"78ee604e1bmshce70da4e3b66e0ep13ceebjsn59361749f3f7"};
   Response tikTokApiResponse;
   Map<String,dynamic> tikTokKeyValues;
   List tikTokDataList = [];

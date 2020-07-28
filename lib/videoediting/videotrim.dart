@@ -88,6 +88,7 @@ class _VideoTrimState extends State<VideoTrim> {
                     circlePaintColor: Colors.blue,
                     borderPaintColor: Colors.lightBlue[200],
                     scrubberPaintColor: Colors.red,
+                    fit:BoxFit.fill ,
                     onChangeStart: (value) {
                       _startValue = value;
                     },
@@ -141,10 +142,8 @@ class _VideoTrimState extends State<VideoTrim> {
                     TrimVideos().then((outputPath) {
                       //Output path is path of trimmed video
                       print('OUTPUT PATH: $outputPath');
-                      final snackBar = SnackBar(content: Text('Video Trimmed and Saved successfully'));
-                      Scaffold.of(context).showSnackBar(snackBar);
 
-                      EditDragDropList(outputPath);
+                      EditDragDropList(outputPath,context);
 
                     });
                   },
@@ -190,7 +189,7 @@ class _VideoTrimState extends State<VideoTrim> {
         endValue: _endValue,
         videoFileName: "TV${trimVideoFiles.length + 1}_${pt.basenameWithoutExtension(widget.videopath)}",
         videoFolderName:"trimvideos",
-        storageDir:StorageDir.externalStorageDirectory
+        storageDir:StorageDir.externalStorageDirectory,
     )
         .then((value) {
       setState(() {
@@ -206,7 +205,7 @@ class _VideoTrimState extends State<VideoTrim> {
 
  //This will edit the list and show path and thumbnail of current trimmed value
 
- void EditDragDropList(String outputPath) async
+ void EditDragDropList(String outputPath,BuildContext context) async
  {
 
    final videoImageThumbnail = await _flutterVideoCompress.getThumbnail(
@@ -217,11 +216,24 @@ class _VideoTrimState extends State<VideoTrim> {
 
    print("Edit drag drop path${videoImageThumbnail}");
 
-   StaticData.dragDropVideoList[widget.videoindex] = {"videoimage":videoImageThumbnail,"videopath":outputPath};
+   if(videoImageThumbnail == null)
+     {
+       final snackBar = SnackBar(content: Text('Video does not Trimmed Successfully'));
+       Scaffold.of(context).showSnackBar(snackBar);
+     }
 
-   Navigator.pop(context);
-   Navigator.push(context, MaterialPageRoute(
+     else
+       {
+         final snackBar = SnackBar(content: Text('Video Trimmed Successfully'));
+         Scaffold.of(context).showSnackBar(snackBar);
+
+         StaticData.dragDropVideoList[widget.videoindex] = {"videoimage":videoImageThumbnail,"videopath":outputPath};
+
+         Navigator.pop(context);
+         Navigator.push(context, MaterialPageRoute(
            builder: (context) => Home()));
+
+   }
 
  }
 

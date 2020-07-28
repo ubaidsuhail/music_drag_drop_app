@@ -198,7 +198,7 @@ class _VideoSyncState extends State<VideoSync> {
     // -shortest means video ya audio ma sa jo choti hogi utna hi chalega
     //-stream_loop -1 means infinite bar audio loop hogi
     //Ya command uswaqt chaya jb ogg ki audio file nhi chaya(Ya fast ha)
-    _flutterFFmpeg.execute("-i ${widget.videopath} -stream_loop -1 -i ${widget.audiopath} -c copy -map 0:v:0 -map 1:a:0 -shortest ${saveVideosOuputPath}").then((rc){
+    _flutterFFmpeg.execute("-i ${widget.videopath} -stream_loop -1 -i '${widget.audiopath}' -c copy -map 0:v:0 -map 1:a:0 -shortest ${saveVideosOuputPath}").then((rc){
       print("FFmpeg process exited with rc $rc");
 
       if(rc == 0)

@@ -308,6 +308,7 @@ class _HomeState extends State<Home> {
                                   },
                                     child:Column(
                                       children: <Widget>[
+                                        StaticData.dragDropVideoList[index]["videoimage"] != null ?
                                         Container(
                                             margin: EdgeInsets.only(left: 3.0,right: 3.0,top: 4.0),
                                             child:Image.memory(
@@ -316,7 +317,20 @@ class _HomeState extends State<Home> {
                                               width: 130.0,
                                               fit: BoxFit.fill,
                                             )
-                                        ),
+                                        )
+                                         :
+                                        //Agar thumbnail na bna video ki
+                                        Container(
+                                          margin: EdgeInsets.only(left: 3.0,right: 3.0,top: 4.0),
+                                          height: 130.0,
+                                          width: 130.0,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(color: Colors.red[200],width:1.0),
+                                            color:Colors.white,
+                                          ),
+                                            child:Text("This video does not have thumbnail",textAlign: TextAlign.center,),
+                                        )
+
 //
                                       ],
                                     )
